@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Impact of AI on Employment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=Satoshi:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #111827;
+      --bg-card: #161d2e;
+      --accent: #38bdf8;
+      --accent-dim: #1e6e9a;
+      --accent-glow: rgba(56, 189, 248, 0.15);
+      --text-primary: #e8edf5;
+      --text-secondary: #8b95a8;
+      --text-muted: #4b5568;
+      --border: #1e293b;
+      --border-accent: rgba(56, 189, 248, 0.3);
+      --font-heading: 'Instrument Serif', Georgia, serif;
+      --font-body: 'Satoshi', system-ui, sans-serif;
+      --font-mono: 'DM Mono', 'Courier New', monospace;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── GRID TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(56, 189, 248, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAVIGATION ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(10, 14, 23, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow 0.3s ease;
+    }
+
+    nav.scrolled {
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text-secondary);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 7rem 2rem;
+    }
+
+    .section-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .content-placeholder {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 3rem 2.5rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.8;
+      background: rgba(22, 29, 46, 0.4);
+      position: relative;
+    }
+
+    .content-placeholder::before {
+      content: '//';
+      position: absolute;
+      top: 1.25rem;
+      left: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent-dim);
+      opacity: 0.6;
+    }
+
+    /* ── HERO ── */
+    #home {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 72px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-bg .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.3;
+    }
+
+    .hero-bg .orb-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      top: -200px;
+      right: -150px;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+
+    .hero-bg .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+      bottom: -100px;
+      left: -100px;
+      animation: drift 15s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(30px, -40px); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 800px;
+      padding: 2rem;
+    }
+
+    .hero-tag {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s ease forwards;
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 400;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.4s ease forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-body);
+      font-size: 1.15rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      max-width: 550px;
+      margin: 0 auto 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.6s ease forwards;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--bg-primary);
+      background: var(--accent);
+      padding: 0.9rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: transform 0.2s, box-shadow 0.3s;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.8s ease forwards;
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(56, 189, 248, 0.3);
+    }
+
+    .hero-cta svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.2s ease forwards;
+    }
+
+    .hero-scroll-hint span {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── ALTERNATING SECTION BACKGROUNDS ── */
+    section:nth-of-type(even) {
+      background: var(--bg-secondary);
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-accent), transparent);
+    }
+
+    /* ── CARD GRID PLACEHOLDER ── */
+    .card-grid-placeholder {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .card-placeholder {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      background: rgba(22, 29, 46, 0.3);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .card-placeholder:hover {
+      border-color: var(--border-accent);
+      background: rgba(56, 189, 248, 0.03);
+    }
+
+    /* ── STAT ROW PLACEHOLDER ── */
+    .stat-row-placeholder {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .stat-placeholder {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-left: 1px solid var(--border);
+    }
+
+    .stat-placeholder:first-child {
+      border-left: none;
+    }
+
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── REFERENCES ── */
+    #references {
+      background: var(--bg-primary);
+      border-top: 1px solid var(--border);
+    }
+
+    .references-list-placeholder {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      background: rgba(22, 29, 46, 0.4);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 2.2;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--bg-primary);
+    }
+
+    .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .footer-info {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+
+    .footer-info strong {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .footer-team {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .footer-team span {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── SCROLL ANIMATIONS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: 72px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(10, 14, 23, 0.97);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2rem;
+        gap: 0.5rem;
+        transform: translateX(100%);
+        transition: transform 0.35s ease;
+      }
+
+      .nav-links.open {
+        transform: translateX(0);
+      }
+
+      .nav-links a {
+        font-size: 0.85rem;
+        padding: 0.75rem 1rem;
+        width: 100%;
+      }
+
+      .nav-toggle {
+        display: flex;
+      }
+
+      .nav-toggle.open span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      .nav-toggle.open span:nth-child(2) {
+        opacity: 0;
+      }
+      .nav-toggle.open span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+
+      section {
+        padding: 5rem 1.25rem;
+      }
+
+      .content-placeholder {
+        padding: 2rem 1.5rem;
+      }
+
+      .stat-placeholder {
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding: 1.5rem 1rem;
+      }
+
+      .stat-placeholder:first-child {
+        border-top: none;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-team {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAVIGATION ─── -->
+  <nav aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="#home" class="nav-logo">AI and Employment</a>
+      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" role="list">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#background">Background</a></li>
+        <li><a href="#impacts">Impacts</a></li>
+        <li><a href="#affected">Who's Affected</a></li>
+        <li><a href="#case-studies">Case Studies</a></li>
+        <li><a href="#future">Future</a></li>
+        <li><a href="#ethics">Ethics</a></li>
+        <li><a href="#conclusion">Conclusion</a></li>
+        <li><a href="#references">References</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ─── 1. HOME / HERO ─── -->
+  <section id="home">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-tag">INST 466: Semester Project</p>
+      <h1 class="hero-title">The Impact of AI<br>on <em>Employment</em></h1>
+      <p class="hero-subtitle">How artificial intelligence is reshaping the workforce, who it affects most, and what we can do about it.</p>
+      <a href="#background" class="hero-cta">
+        Explore the Research
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v12M1 7l6 6 6-6"/></svg>
+      </a>
+    </div>
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ─── 2. BACKGROUND ─── -->
+  <section id="background">
+    <div class="section-inner reveal">
+      <p class="section-label">Section 01</p>
+      <h2 class="section-title">Background</h2>
+      <div class="content-placeholder">
+        [Background content goes here]<br><br>
+        - History of AI in the workforce<br>
+        - Why this topic matters<br>
+        - Overview of the current landscape
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 3. IMPACTS OF AI ON EMPLOYMENT ─── -->
+  <section id="impacts">
+    <div class="section-inner reveal">
+      <p class="section-label">Section 02</p>
+      <h2 class="section-title">Impacts of AI on <em>Employment</em></h2>
+      <div class="content-placeholder">
+        [Content on positive and negative effects goes here]<br><br>
+        - Positive impacts: productivity, new roles, innovation<br>
+        - Negative impacts: job displacement, skills gap, instability
+      </div>
+      <div class="card-grid-placeholder">
+        <div class="card-placeholder">[Positive impact card]</div>
+        <div class="card-placeholder">[Negative impact card]</div>
+        <div class="card-placeholder">[Industry comparison card]</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 4. WHO IS MOST AFFECTED ─── -->
+  <section id="affected">
+    <div class="section-inner reveal">
+      <p class="section-label">Section 03</p>
+      <h2 class="section-title">Who Is Most <em>Affected</em>?</h2>
+      <div class="content-placeholder">
+        [Content on affected demographics goes here]<br><br>
+        - Workers in routine/repetitive roles<br>
+        - Disparities by income, education, race, and geography<br>
+        - Intersectionality and accessibility concerns
+      </div>
+      <div class="stat-row-placeholder">
+        <div class="stat-placeholder">
+          <div class="stat-number">—%</div>
+          <div class="stat-label">[Stat placeholder]</div>
+        </div>
+        <div class="stat-placeholder">
+          <div class="stat-number">—%</div>
+          <div class="stat-label">[Stat placeholder]</div>
+        </div>
+        <div class="stat-placeholder">
+          <div class="stat-number">—%</div>
+          <div class="stat-label">[Stat placeholder]</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 5. CASE STUDIES / REAL-LIFE STORIES & STATISTICS ─── -->
+  <section id="case-studies">
+    <div class="section-inner reveal">
+      <p class="section-label">Section 04</p>
+      <h2 class="section-title">Case Studies &amp; <em>Real-Life Stories</em></h2>
+      <div class="content-placeholder">
+        [Case studies and statistics content goes here]<br><br>
+        - Real-world examples of AI-driven job changes<br>
+        - Key statistics and data visualizations<br>
+        - Personal stories from affected workers
+      </div>
+      <div class="card-grid-placeholder">
+        <div class="card-placeholder">[Case study 1]</div>
+        <div class="card-placeholder">[Case study 2]</div>
+        <div class="card-placeholder">[Case study 3]</div>
+        <div class="card-placeholder">[Statistics / chart placeholder]</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 6. HOW TO PREPARE FOR THE FUTURE WORKFORCE ─── -->
+  <section id="future">
+    <div class="section-inner reveal">
+      <p class="section-label">Section 05</p>
+      <h2 class="section-title">How to Prepare for the <em>Future Workforce</em></h2>
+      <div class="content-placeholder">
+        [Future preparation content goes here]<br><br>
+        - Reskilling and upskilling strategies<br>
+        - Policy recommendations<br>
+        - Role of education and training programs<br>
+        - What individuals and companies can do
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 7. ETHICAL CONCERNS ─── -->
+  <section id="ethics">
+    <div class="section-inner reveal">
+      <p class="section-label">Section 06</p>
+      <h2 class="section-title">Ethical <em>Concerns</em></h2>
+      <div class="content-placeholder">
+        [Ethical concerns content goes here]<br><br>
+        - Bias in AI hiring and screening tools<br>
+        - Privacy and surveillance in the workplace<br>
+        - Accountability and transparency<br>
+        - Balancing innovation with worker protections
+      </div>
+      <div class="card-grid-placeholder">
+        <div class="card-placeholder">[Ethical concern 1]</div>
+        <div class="card-placeholder">[Ethical concern 2]</div>
+        <div class="card-placeholder">[Ethical concern 3]</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 8. CONCLUSION ─── -->
+  <section id="conclusion">
+    <div class="section-inner reveal">
+      <p class="section-label">Section 07</p>
+      <h2 class="section-title">Conclusion</h2>
+      <div class="content-placeholder">
+        [Conclusion content goes here]<br><br>
+        - Summary of key findings<br>
+        - Final thoughts on balancing AI benefits and risks<br>
+        - Call to action for readers
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── REFERENCES ─── -->
+  <section id="references">
+    <div class="section-inner reveal">
+      <p class="section-label">Sources</p>
+      <h2 class="section-title">References</h2>
+      <div class="references-list-placeholder">
+        [1] [Reference placeholder]<br>
+        [2] [Reference placeholder]<br>
+        [3] [Reference placeholder]<br>
+        [4] [Reference placeholder]<br>
+        [5] [Reference placeholder]<br>
+        [6] [Reference placeholder]<br>
+        [7] [Reference placeholder]<br>
+        [8] [Reference placeholder]
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-info">
+        <strong>INST 466</strong> - The Impact of AI on Employment
+      </div>
+      <div class="footer-team">
+        <span>Moiz Uddin</span>
+        <span>Joyce Oruitemeka</span>
+        <span>Winner Ukawoko</span>
+        <span>Philip Kucher</span>
+        <span>Ayomide Ogunbode</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── SCRIPTS ─── -->
+  <script>
+    // Nav scroll effect
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Mobile menu toggle
+    const toggle = document.querySelector('.nav-toggle');
+    const links = document.querySelector('.nav-links');
+    toggle.addEventListener('click', () => {
+      const isOpen = links.classList.toggle('open');
+      toggle.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Close mobile menu on link click
+    links.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        links.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Active nav link on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navAnchors = document.querySelectorAll('.nav-links a');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navAnchors.forEach(a => a.classList.remove('active'));
+          const active = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach(s => observer.observe(s));
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+    reveals.forEach(el => revealObserver.observe(el));
+  </script>
+
+</body>
+</html>
